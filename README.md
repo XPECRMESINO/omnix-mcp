@@ -36,10 +36,11 @@
   - [🔹 Límites de APIs externas](#-límites-de-apis-externas)
   - [🔹 Procesos Asíncronos](#-procesos-asíncronos)
 - [📋 10. Gestión y Estructura de Logs](#-10-gestión-y-estructura-de-logs)
-- [🛡️ 11. Pruebas de Lógica y Seguridad](#-11-pruebas-de-lógica-y-seguridad)
-- [📚 12. Documentación Detallada de las Herramientas (Tools)](#-12-documentación-detallada-de-las-herramientas-tools)
+- [🚀 11. Stack Tecnológico](#-11-stack-tecnológico)
+- [🛡️ 12. Pruebas de Lógica y Seguridad](#-11-pruebas-de-lógica-y-seguridad)
+- [📚 13. Documentación Detallada de las Herramientas (Tools)](#-12-documentación-detallada-de-las-herramientas-tools)
   - [🔧 Herramienta: obtener_estado_pedido](#-herramienta-obtener_estado_pedido)
-- [🚧 13. Pasos de Instalación y Uso del MCP Server](#-13-pasos-de-instalación-y-uso-del-mcp-server)
+- [🚧 14. Pasos de Instalación y Uso del MCP Server](#-13-pasos-de-instalación-y-uso-del-mcp-server)
 
 
 # 🛠️ Guía de Buenas Prácticas para Implementación de MCP Servers - Omnix IA
@@ -159,12 +160,72 @@ Ejemplo sugerido:
     "transactionId": "67890"
 }
 ```
+## 🚀 11. Stack Tecnológico
 
-## 🛡️ 11. Pruebas de Lógica y Seguridad
+A continuación, se describe el stack tecnológico base recomendado para el desarrollo de MCP Tools y MCP Servers.
+
+🔹 **TypeScript**
+
+  Lenguaje Principal: TypeScript será el lenguaje de programación estándar.
+  Razón: Su sistema de tipado estático ayuda a detectar errores en tiempo de desarrollo, mejora la legibilidad y mantenibilidad del código, y ofrece un excelente autocompletado y refactorización en los IDEs modernos. Esto es crucial para construir sistemas robustos y colaborativos.
+
+🔹 **Zod** para Schemas
+
+  Declaración y Validación de Esquemas: Se utilizará Zod (https://www.npmjs.com/package/zod) para definir y validar los esquemas de entrada/salida (I/O Schemas) de las herramientas.
+  Razón: Zod es una biblioteca de validación "TypeScript-first" que permite inferir tipos estáticos de TypeScript directamente desde las definiciones de los esquemas de validación. Esto asegura que los datos en tiempo de ejecución coincidan con las estructuras de tipos definidas, reduciendo la posibilidad de errores de datos y facilitando la integración entre el MCP Server y los agentes AI. Además, sus mensajes de error son detallados y fáciles de usar.
+
+🔹 **MCP Inspector** para Pruebas
+
+  Pruebas de Herramientas MCP: Se utilizará @modelcontextprotocol/inspector (https://www.npmjs.com/package/@modelcontextprotocol/inspector) para realizar pruebas funcionales y de conformidad de las MCP Tools.
+  Razón: Esta herramienta está específicamente diseñada para el Protocolo de Contexto de Modelo (MCP). Permite validar que las herramientas cumplan con las especificaciones del protocolo, verificar los esquemas de entrada/salida, y asegurar que la lógica de la herramienta funcione como se espera antes de su integración en un MCP Server.
+
+🔹 **Configuración de tsconfig.json**
+
+  Se recomienda la siguiente configuración base para tsconfig.json para proyectos de MCP Server/Tool:
+  JSON
+  ```json
+    {
+      "compilerOptions": {
+        "target": "ES2022", // Compila a una versión moderna de JavaScript, compatible con versiones recientes de Node.js.
+        "module": "NodeNext", // Utiliza el sistema de módulos más reciente de Node.js (ESM).
+        "moduleResolution": "NodeNext", // Resuelve módulos al estilo de Node.js para ESM.
+        "baseUrl": "./src", // Directorio base para resolver rutas no relativas.
+        "paths": { // Define alias para rutas, facilitando importaciones.
+          "@/*": ["*"]
+        },
+        "outDir": "./dist", // Directorio de salida para los archivos compilados.
+        "rootDir": "./src", // Especifica el directorio raíz de los archivos fuente.
+        "esModuleInterop": true, // Permite la interoperabilidad con módulos CommonJS.
+        "forceConsistentCasingInFileNames": true, // Asegura la consistencia en el uso de mayúsculas/minúsculas en los nombres de archivo.
+        "strict": true, // Habilita todas las opciones de chequeo de tipos estrictos (noImplicitAny, strictNullChecks, etc.).
+        "noImplicitAny": true, // Exige tipos explícitos para variables y parámetros donde el tipo no puede ser inferido.
+        "strictNullChecks": true, // Manejo explícito de `null` y `undefined`.
+        "skipLibCheck": true, // Omite la verificación de tipos de los archivos de declaración (.d.ts) de las dependencias. Acelera la compilación.
+        "resolveJsonModule": true, // Permite importar archivos .json como módulos.
+        "declaration": true, // Genera archivos de declaración .d.ts para los módulos TypeScript.
+        "sourceMap": true, // Genera sourcemaps para facilitar el debugging.
+        "experimentalDecorators": true, // Habilita el uso de decoradores (útil para algunos frameworks o librerías).
+        "emitDecoratorMetadata": true // Emite metadatos de tipo para decoradores (usado por librerías como TypeORM, InversifyJS).
+      },
+      "include": ["src/**/*.ts"], // Patrones para incluir archivos en la compilación.
+      "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"] // Patrones para excluir archivos de la compilación.
+    }
+  ```
+
+🔹 Otros Aspectos Técnicos Clave
+  - Linting y Formateo:
+    - **ESLint y Prettier**: Es crucial configurar ESLint para el análisis estático del código y Prettier para el formateo automático. Esto asegura un estilo de código consistente en todo el proyecto y ayuda a prevenir errores comunes.
+    Razón: Mantienen la calidad y legibilidad del código, facilitan la colaboración y reducen el tiempo dedicado a discusiones sobre estilo.
+  
+  #### TODO
+  - Estructura de carpetas
+  - esquema de pruebas unitarias
+
+## 🛡️ 12. Pruebas de Lógica y Seguridad
 - Implementa pruebas automatizadas que cubran lógica de negocio y validación de seguridad.
 - Realiza regularmente escaneos de seguridad y auditorías internas del código.
 
-## 📚 12. Documentación Detallada de las Herramientas (Tools)
+## 📚 13. Documentación Detallada de las Herramientas (Tools)
 Cada herramienta debe contar con documentación específica que contenga:
 
 - Propósito claro: ¿Para qué sirve la herramienta?
@@ -213,7 +274,7 @@ Output Schema:
 
 ---
 
-## 🚧 13. Pasos de Instalación y Uso del MCP Server
+## 🚧 14. Pasos de Instalación y Uso del MCP Server
 
 Documenta claramente:
 
