@@ -286,7 +286,8 @@ Documenta claramente:
 
 
 # 📐 Implementación de MCP Tools como Dependencias
-La idea principal es mantener cada MCP Tool o recurso independiente y modular, para que puedan ser reutilizados y fácilmente añadidos como dependencias a diferentes proyectos MCP Server.
+
+La idea principal es mantener cada MCP Tool o recurso independiente y modular, para que puedan ser reutilizados y fácilmente añadidos como dependencias a diferentes proyectos MCP Server, siempre y cuando estos sirvan de uso general. Por ejemplo, las tools de get-order, get-sg, get-item-info, get-route, etc.. Se creen como tools generales que puedan ser usadas en cualquier proyuecto MCP server donde se necesite usar sin necesidad de crear tools repetidas por cada proyecto MCP, sería algo así como tener tools generales y tools de específicas por proyecto MCP.
 
 Beneficios:
 
@@ -296,6 +297,7 @@ Beneficios:
 - Escalabilidad y flexibilidad en el desarrollo.
 
 ## 🧩 Estructura de MCP Tools
+
 Cada MCP Tool o recurso debe tener la siguiente estructura base:
 
 - Tipo: Indica si es una herramienta (tool) o un recurso (resource).
@@ -306,16 +308,23 @@ Cada MCP Tool o recurso debe tener la siguiente estructura base:
 📊 Diagrama Mermaid (Implementación propuesta):
 
 ```mermaid
-graph LR
-    subgraph Modules
-        tool[Type: Tool<br/>Name<br/>I/O Schema<br/>Function export]
-        resource[Type: Resource<br/>Name<br/>I/O Schema<br/>Location]
+flowchart LR
+    subgraph Tools_Repo [Tools Repo]
+        T1[Gral Tool 1]
+        T2[Gral Tool 2]
+        T3[Gral Tool 3]
     end
-    tool -->|As dependency| MCP_Server_APP
-    resource -->|As dependency| MCP_Server_APP
 
-    classDef box fill:#f9f,stroke:#333,stroke-width:1px
-    class MCP_Server_APP box
+    T1 -->|As Dependency| MCP[MCP Server Project #1]
+    T2 -->|As Dependency| MCP
+    T3 -->|As Dependency| MCP
+
+    MCP --> |Custom impl.|ST1[Specific Tool 1]
+    MCP --> |Custom impl.|ST2[Specific Tool 2]
+    MCP --> |Custom impl.|ST3[Specific Tool 3]
+
+    classDef dashed stroke-dasharray: 5 5;
+    class ST1,ST2,ST3 dashed;
 ```
 
 # 📁 2. Gestión de MCP Tools en Repositorios
